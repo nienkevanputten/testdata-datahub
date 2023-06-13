@@ -1,169 +1,465 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "allOf": [
-    {
-      "$ref": "#/definitions/Options"
-    },
-    {
-      "properties": {
-        "env": {
-          "description": "This is an object of keys that represent different environments. For example, you may have: `{ env: { production: { /* specific options */ } } }` which will use those options when the environment variable BABEL_ENV is set to \"production\". If BABEL_ENV isn't set then NODE_ENV will be used, if it's not set then it defaults to \"development\"",
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Options"
-          },
-          "default": {}
-        }
-      }
-    }
-  ],
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "Options": {
+    "homepageTrigger": {
+      "title": "homepage trigger",
       "type": "object",
+      "description": "The Google Workspace add-on manifest configuration for homepage triggers.",
       "properties": {
-        "ast": {
-          "description": "Include the AST in the returned object",
-          "type": "boolean",
-          "default": true
-        },
-        "auxiliaryCommentAfter": {
-          "description": "Attach a comment after all non-user injected code.",
-          "type": "string"
-        },
-        "auxiliaryCommentBefore": {
-          "description": "Attach a comment before all non-user injected code.",
-          "type": "string"
-        },
-        "code": {
-          "description": "Enable code generation",
-          "type": "boolean",
-          "default": true
-        },
-        "comments": {
-          "description": "Output comments in generated output.",
-          "type": "boolean",
-          "default": true
-        },
-        "compact": {
-          "description": "Do not include superfluous whitespace characters and line terminators. When set to \"auto\" compact is set to true on input sizes of >500KB.",
-          "type": ["string", "boolean"],
-          "enum": ["auto", true, false],
-          "default": "auto"
-        },
-        "extends": {
-          "description": "A path to a .babelrc file to extend",
-          "type": "string"
-        },
-        "filename": {
-          "description": "Filename for use in errors etc.",
-          "type": "string",
-          "default": "unknown"
-        },
-        "filenameRelative": {
-          "description": "Filename relative to sourceRoot (defaults to \"filename\")",
-          "type": "string"
-        },
-        "highlightCode": {
-          "description": "ANSI highlight syntax error code frames",
+        "enabled": {
+          "description": "Whether or not homepage (non-contextual) cards are enabled in Calendar. Defaults to true.",
           "type": "boolean"
         },
-        "ignore": {
-          "description": "Opposite of the \"only\" option",
-          "type": ["string", "array"],
-          "items": {
-            "type": "string"
-          }
-        },
-        "inputSourceMap": {
-          "description": "If true, attempt to load an input sourcemap from the file itself. If an object is provided, it will be treated as the source map object itself.",
-          "type": ["boolean", "object"],
-          "default": true
-        },
-        "keepModuleIdExtensions": {
-          "description": "Keep extensions in module ids",
-          "type": "boolean",
-          "default": false
-        },
-        "moduleId": {
-          "description": "Specify a custom name for module ids.",
-          "type": "string"
-        },
-        "moduleIds": {
-          "description": "If truthy, insert an explicit id for modules. By default, all modules are anonymous. (Not available for common modules)",
-          "type": "string",
-          "default": false
-        },
-        "moduleRoot": {
-          "description": "Optional prefix for the AMD module formatter that will be prepend to the filename on module definitions. (defaults to \"sourceRoot\")",
-          "type": "string"
-        },
-        "only": {
-          "description": "A glob, regex, or mixed array of both, matching paths to only compile. Can also be an array of arrays containing paths to explicitly match. When attempting to compile a non-matching file it's returned verbatim.",
-          "type": ["string", "array"],
-          "items": {
-            "type": "string"
-          }
-        },
-        "plugins": {
-          "description": "List of plugins to load and use",
-          "type": "array",
-          "items": {
-            "type": ["string", "array"],
-            "items": [
-              {
-                "description": "The name of the plugin.",
-                "type": "string"
-              },
-              {
-                "description": "The options of the plugin.",
-                "type": "object"
-              }
-            ]
-          }
-        },
-        "presets": {
-          "description": "List of presets (a set of plugins) to load and use",
-          "type": "array",
-          "items": {
-            "type": ["string", "array"],
-            "items": [
-              {
-                "description": "The name of the preset.",
-                "type": "string"
-              },
-              {
-                "description": "The options of the preset.",
-                "type": "object"
-              }
-            ]
-          }
-        },
-        "retainLines": {
-          "default": false,
-          "description": "Retain line numbers. This will lead to wacky code but is handy for scenarios where you can't use source maps. NOTE: This will obviously not retain the columns.",
-          "type": "boolean"
-        },
-        "sourceFileName": {
-          "description": "Set sources[0] on returned source map. (defaults to \"filenameRelative\")",
-          "type": "string"
-        },
-        "sourceMaps": {
-          "default": false,
-          "description": "If truthy, adds a map property to returned output. If set to \"inline\", a comment with a sourceMappingURL directive is added to the bottom of the returned code. If set to \"both\" then a map property is returned as well as a source map comment appended.",
-          "type": ["string", "boolean"],
-          "enum": ["both", "inline", true, false]
-        },
-        "sourceMapTarget": {
-          "description": "Set file on returned source map. (defaults to \"filenameRelative\")",
-          "type": "string"
-        },
-        "sourceRoot": {
-          "description": "The root from which all sources are relative. (defaults to \"moduleRoot\")",
+        "runFunction": {
+          "description": "The name of the function to run when this trigger fires. You must implement this function in your add-on project. This function must build and return an array of Card objects.",
           "type": "string"
         }
       }
     }
   },
-  "title": "JSON schema for Babel 6+ configuration files",
+  "properties": {
+    "runtimeVersion": {
+      "description": "Version of the server to use when executing this project.",
+      "type": "string",
+      "enum": ["STABLE", "V8", "DEPRECATED_ES5"],
+      "default": "STABLE"
+    },
+    "timeZone": {
+      "description": "The script time zone in one of the available ZoneId values such as \"America/Denver\".",
+      "type": "string",
+      "default": "America/New_York"
+    },
+    "dependencies": {
+      "title": "dependencies",
+      "description": "A list of advanced services and libraries.",
+      "type": "object",
+      "properties": {
+        "enabledAdvancedServices": {
+          "description": "The list of advanced services enabled for use by the script project.",
+          "type": "array",
+          "items": {
+            "title": "advanced service",
+            "description": "A single advanced service.",
+            "type": "object",
+            "required": ["userSymbol", "serviceId", "version"],
+            "properties": {
+              "userSymbol": {
+                "description": "The identifier used to refer to this service in the code of the Apps Script project.",
+                "type": "string",
+                "default": "Sheets"
+              },
+              "serviceId": {
+                "description": "The identifier of the service that is shown in the API discovery document (e.g., drive).",
+                "type": "string",
+                "default": "sheets"
+              },
+              "version": {
+                "description": "The enabled version of the service (e.g., \"v1\").",
+                "type": "string",
+                "default": "v4"
+              }
+            }
+          }
+        },
+        "libraries": {
+          "description": "The list of libraries used by the script project.",
+          "type": "array",
+          "items": {
+            "title": "library",
+            "description": "A single library.",
+            "type": "object",
+            "required": ["userSymbol", "libraryId", "version"],
+            "properties": {
+              "userSymbol": {
+                "description": "The label that is used in the script project code to refer to this library.",
+                "type": "string",
+                "default": "OAuth2"
+              },
+              "libraryId": {
+                "description": "The script ID of the library's script project. You can find a script ID in the library script's URL or in the script editor by selecting **File > Project properties**.",
+                "type": "string",
+                "default": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF",
+                "maxLength": 57,
+                "minLength": 57
+              },
+              "version": {
+                "description": "The version of the library that is used by the script. This is either a version number or stable, meaning the last version created.",
+                "type": "string",
+                "default": "41"
+              },
+              "developmentMode": {
+                "description": "If true, version is ignored and the script uses the current library project saved code, even if that code has not been saved to a new version.",
+                "type": "boolean",
+                "default": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "webapp": {
+      "title": "script",
+      "description": "The script project's web app configuration. Only used if the project is deployed as a web app.",
+      "type": "object",
+      "properties": {
+        "access": {
+          "description": "The levels of permission for running the web app.",
+          "type": "string",
+          "enum": ["MYSELF", "DOMAIN", "ANYONE", "ANYONE_ANONYMOUS"],
+          "default": "MYSELF"
+        },
+        "executeAs": {
+          "description": "The identity under which the web app executes.",
+          "type": "string",
+          "enum": ["USER_ACCESSING", "USER_DEPLOYING"],
+          "default": "USER_DEPLOYING"
+        }
+      }
+    },
+    "exceptionLogging": {
+      "description": "The location where exceptions are logged.",
+      "type": "string",
+      "enum": ["NONE", "STACKDRIVER"]
+    },
+    "oauthScopes": {
+      "description": "The definition of authorization scopes used by the script project.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "urlFetchWhitelist": {
+      "description": "A list of HTTPS URL prefixes. If present, any URL endpoint fetched must match one of the prefixes in this list. This can help to protect user data.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "hostname"
+      }
+    },
+    "executionApi": {
+      "title": "api options",
+      "description": "The script project's API executable configuration. Only used if the project is deployed for API execution.",
+      "type": "object",
+      "properties": {
+        "access": {
+          "description": "Determines who has permission to run the script from the API.",
+          "type": "string",
+          "enum": ["MYSELF", "DOMAIN", "ANYONE", "ANYONE_ANONYMOUS"]
+        }
+      }
+    },
+    "sheets": {
+      "title": "sheet manifest",
+      "description": "Defines manifest values specific to Sheets.",
+      "type": "object",
+      "properties": {
+        "macros": {
+          "description": "A list of defined macros and their associated properties.",
+          "type": "array",
+          "items": {
+            "title": "macros",
+            "description": "A defined macros and it's associated properties.",
+            "type": "object",
+            "properties": {
+              "menuName": {
+                "description": "The name of the macro as it appears in the Google Sheets UI.",
+                "type": "string",
+                "default": "My Macro"
+              },
+              "functionName": {
+                "description": "The name of the Apps Script function that executes the macro. By default this matches the menuName for functions automatically created, but this is not a requirement.",
+                "type": "string",
+                "default": "myFunction"
+              },
+              "defaultShortcut": {
+                "description": "Defines the keyboard shortcut that executes the macro. This must be of the form Ctrl+Alt+Shift+Number, where Number is a single-digit. Macros without shortcuts can only be executed from the Tools > Macros menu.",
+                "type": "string",
+                "default": "Ctrl+Alt+Shift+1"
+              }
+            },
+            "required": ["menuName", "functionName", "defaultShortcut"]
+          }
+        }
+      }
+    },
+    "dataStudio": {
+      "title": "add-on manifest",
+      "description": "Data Studio add-on manifest.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Display name for add-on.",
+          "type": "string"
+        },
+        "logoUrl": {
+          "description": "URL for logo image of add-on.",
+          "type": "string",
+          "format": "hostname"
+        },
+        "company": {
+          "description": "Company name for the add-on.",
+          "type": "string"
+        },
+        "addonUrl": {
+          "type": "string",
+          "format": "hostname"
+        },
+        "companyUrl": {
+          "type": "string",
+          "format": "hostname"
+        },
+        "supportUrl": {
+          "description": "URL for support information of the add-on.",
+          "type": "string",
+          "format": "hostname"
+        },
+        "description": {
+          "description": "Short description about the add-on.",
+          "type": "string"
+        },
+        "sources": {
+          "description": "List of sources or services that can be accessed with this add-on.",
+          "type": "array",
+          "items": {
+            "description": "A single source type.",
+            "type": "string"
+          }
+        },
+        "templates": {
+          "title": "templates",
+          "description": "Map of template name to report ID.",
+          "type": "object"
+        },
+        "shortDescription": {
+          "description": "Even shorter description used in gallery cards. Only a maximum of 114 characters will be shown on the card.",
+          "type": "string"
+        },
+        "authType": {
+          "description": "List of AuthTypes supported.",
+          "type": "array",
+          "items": {
+            "description": "Types of Authorization supported by the add-on.",
+            "type": "string",
+            "enum": ["NONE", "KEY", "USER_PASS", "OAUTH2"]
+          }
+        },
+        "privacyPolicyUrl": {
+          "description": "Url for privacy policy information about the add-on.",
+          "type": "string",
+          "format": "hostname"
+        },
+        "termsOfServiceUrl": {
+          "description": "Url for terms of service information about the add-on.",
+          "type": "string",
+          "format": "hostname"
+        }
+      },
+      "required": ["name", "logoUrl", "company", "supportUrl", "description"]
+    },
+    "addOns": {
+      "title": "add-ons",
+      "description": "G Suite Add-ons",
+      "type": "object",
+      "properties": {
+        "common": {
+          "title": "common options",
+          "description": "Common properties between all G Suite add-on types.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "The add-on name.",
+              "type": "string"
+            },
+            "logoUrl": {
+              "description": "The logo URL.",
+              "type": "string",
+              "format": "uri"
+            },
+            "layoutProperties": {
+              "title": "layout options",
+              "description": "Layout properties.",
+              "type": "object",
+              "properties": {
+                "primaryColor": {
+                  "description": "The color of toolbar. Defaults to grey (#424242).",
+                  "type": "string"
+                },
+                "secondaryColor": {
+                  "description": "The default color of buttons. Defaults to the primary color (if it is set); otherwise defaults to blue (#2196F3).",
+                  "type": "string"
+                }
+              }
+            },
+            "homepageTrigger": {
+              "title": "homepage trigger",
+              "description": "Homepage trigger data",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Whether or not homepage (non-contextual) cards are enabled. Defaults to true.",
+                  "type": "boolean"
+                },
+                "runFunctions": {
+                  "description": "The name of the function to run",
+                  "type": "string"
+                }
+              }
+            },
+            "universalActions": {
+              "description": "Universal add-on actions",
+              "type": "array",
+              "items": {
+                "title": "actions",
+                "description": "Actions",
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "description": "The action label.",
+                    "type": "string"
+                  },
+                  "openLink": {
+                    "description": "The link's URL",
+                    "type": "string",
+                    "format": "hostname"
+                  },
+                  "runFunction": {
+                    "description": "Required for each defined universal action if openLink is not present. If provided, the name of the Apps Script function that executes when the user selects this action.",
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "openLinkUrlPrefixes": {
+              "description": "Link prefixes.",
+              "type": "array",
+              "items": {
+                "description": "A link prefix.",
+                "type": "string"
+              }
+            },
+            "useLocaleFromApp": {
+              "description": "Use the locale from the host application?",
+              "type": "boolean"
+            }
+          },
+          "required": ["logoUrl", "name"]
+        },
+        "gmail": {
+          "title": "add-on metadata",
+          "description": "Gmail add-on metadata.",
+          "type": "object",
+          "properties": {
+            "contextualTriggers": {
+              "description": "Contextual triggers.",
+              "type": "array",
+              "items": {
+                "title": "contextual trigger",
+                "description": "A contextual trigger.",
+                "type": "object",
+                "properties": {
+                  "onTriggerFunction": {
+                    "description": "The name of the Apps Script function that executes when this contextual trigger fires (that is, when a message is opened in Gmail). The function specified here must build and return an array of Card objects.",
+                    "type": "string"
+                  },
+                  "unconditional": {
+                    "title": "unconditional",
+                    "description": "Used to specify that the contextual trigger is fired for all Gmail messages. This is currently the only option, so this should always be an empty object.",
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "homepageTrigger": {
+              "title": "homepage trigger",
+              "description": "The trigger function specification for creating the add-on homepage in the Gmail host.",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Whether or not homepage (non-contextual) cards are enabled in Gmail. Defaults to true.",
+                  "type": "boolean"
+                },
+                "runFunction": {
+                  "description": "The name of the function to run when this trigger fires. You must implement this function in your add-on project. This function must build and return an array of Card objects.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "calendar": {
+          "title": "calendar metadata",
+          "description": "Calendar add-on metadata.",
+          "type": "object",
+          "properties": {
+            "homepageTrigger": {
+              "title": "homepage trigger",
+              "description": "The trigger function specification for creating the add-on homepage in the Calendar host.",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Whether or not homepage (non-contextual) cards are enabled in Calendar. Defaults to true.",
+                  "type": "boolean"
+                },
+                "runFunction": {
+                  "description": "The name of the function to run when this trigger fires. You must implement this function in your add-on project. This function must build and return an array of Card objects.",
+                  "type": "string"
+                }
+              }
+            },
+            "eventOpenTrigger": {
+              "title": "event",
+              "description": "When a Calendar event is opened",
+              "type": "object",
+              "properties": {
+                "runFunction": {
+                  "description": "Event hander function",
+                  "type": "string"
+                }
+              }
+            },
+            "eventUpdateTrigger": {
+              "title": "event",
+              "description": "When a Calendar event is updated",
+              "type": "object",
+              "properties": {
+                "runFunction": {
+                  "description": "Event hander function",
+                  "type": "string"
+                }
+              }
+            },
+            "eventAccess": {
+              "description": "Handler access to Calendar event",
+              "type": "string",
+              "enum": ["METADATA", "READ", "WRITE", "READ_WRITE"]
+            }
+          }
+        },
+        "sheets": {
+          "title": "add-on options",
+          "description": "Configurations for the Google Workspace Add-on's appearance and behavior within the Sheets host application.",
+          "type": "object",
+          "properties": {
+            "homepageTrigger": {
+              "$ref": "#/definitions/homepageTrigger"
+            },
+            "onFileScopeGrantedTrigger": {
+              "title": "contextual trigger",
+              "type": "object",
+              "description": "A configuration for a contextual trigger that fires when the add-on presents the request file scope dialog.",
+              "properties": {
+                "runFunction": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "title": "JSON schema for Google Apps Script manifest files",
   "type": "object"
 }
